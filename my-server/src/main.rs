@@ -1,35 +1,35 @@
-use my_lib::hello_world::greeter_server::{Greeter, GreeterServer};
-use my_lib::hello_world::{HelloReply, HelloRequest};
-use tonic::{transport::Server, Request, Response, Status};
+mod args;
+mod service;
 
-#[derive(Default)]
-pub struct MyGreeter {}
-
-#[tonic::async_trait]
-impl Greeter for MyGreeter {
-    async fn say_hello(
-        &self,
-        request: Request<HelloRequest>,
-    ) -> Result<Response<HelloReply>, Status> {
-        println!("Got a request from {:?}", request.remote_addr());
-
-        let reply = HelloReply {
-            message: format!("Hello {}!", request.into_inner().name),
-        };
-        Ok(Response::new(reply))
-    }
-}
+use crate::args::Args;
+use crate::service::Service;
+use anyhow::Result;
+use clap::Parser;
+use my_lib::hello_world::greeter_server::GreeterServer;
+use tonic::transport::Server;
+use tracing::{info, instrument};
+use tracing_subscriber::fmt;
+use tracing_subscriber::fmt::format::FmtSpan;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:50051".parse().unwrap();
-    let greeter = MyGreeter::default();
+async fn main() -> Result<()> {
+    fmt()
+        .compact()
+        .with_span_events(FmtSpan::NEW | FmtSpan::ENTER | FmtSpan::EXIT | FmtSpan::CLOSE)
+        .init();
+    run().await
+}
 
-    println!("GreeterServer listening on {}", addr);
+#[instrument]
+async fn run() -> Result<()> {
+    let args = Args::parse();
+    let service = Service::default();
+
+    info!("Server listening on {}", args.address);
 
     Server::builder()
-        .add_service(GreeterServer::new(greeter))
-        .serve(addr)
+        .add_service(GreeterServer::new(service))
+        .serve(args.address)
         .await?;
 
     Ok(())
