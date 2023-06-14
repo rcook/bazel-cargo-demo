@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "my-client",
+  "my-lib",
+  "my-server",
+]
