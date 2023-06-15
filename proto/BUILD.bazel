@@ -1,0 +1,12 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+SRCS = [
+    "src/adder.proto",
+]
+
+proto_library(
+    name = "proto",
+    srcs = SRCS,
+    strip_import_prefix = "src",
+    visibility = ["//visibility:public"],
+)

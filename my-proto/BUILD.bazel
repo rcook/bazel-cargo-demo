@@ -1,5 +1,0 @@
-proto_library(
-    name = "my-proto",
-    srcs = ["greeter.proto"],
-    visibility = ["//visibility:public"],
-)

@@ -1,9 +1,15 @@
 load("@crate_index//:defs.bzl", "all_crate_deps")
 load("@rules_rust//rust:defs.bzl", "rust_binary")
 
+SRCS = [
+    "src/args.rs",
+    "src/main.rs",
+    "src/run.rs",
+]
+
 rust_binary(
     name = "my-client",
-    srcs = ["src/main.rs"],
+    srcs = SRCS,
     deps = [
         "//my-lib",
     ] + all_crate_deps(),

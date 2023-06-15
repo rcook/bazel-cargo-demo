@@ -2,14 +2,20 @@ load("@crate_index//:defs.bzl", "all_crate_deps")
 load("@rules_rust//rust:defs.bzl", "rust_library")
 load("@rules_rust//cargo:cargo_build_script.bzl", "cargo_build_script")
 
+SRCS = [
+    "src/lib.rs",
+    "src/proto.rs",
+]
+
 cargo_build_script(
     name = "proto_build_script",
     srcs = ["build.rs"],
     build_script_env = {
+        "RUNNING_IN_BAZEL": "1",
         "PROTOC": "$(execpath @com_google_protobuf//:protoc)",
     },
     data = [
-        "//my-proto",
+        "//proto",
         "@com_google_protobuf//:protoc",
     ],
     deps = all_crate_deps(build = True),
@@ -17,7 +23,7 @@ cargo_build_script(
 
 rust_library(
     name = "my-lib",
-    srcs = ["src/lib.rs"],
+    srcs = SRCS,
     visibility = ["//visibility:public"],
     deps = [
         ":proto_build_script",

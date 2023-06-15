@@ -1,17 +1,22 @@
-use my_lib::hello_world::greeter_client::GreeterClient;
-use my_lib::hello_world::HelloRequest;
+mod args;
+mod run;
+
+use crate::run::run;
+use anyhow::Result;
+use tracing_subscriber::fmt;
+use tracing_subscriber::fmt::format::FmtSpan;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = GreeterClient::connect("http://[::1]:50051").await?;
+async fn main() -> Result<()> {
+    fmt()
+        .compact()
+        .with_span_events(FmtSpan::NEW | FmtSpan::ENTER | FmtSpan::EXIT | FmtSpan::CLOSE)
+        .init();
+    run().await
+}
 
-    let request = tonic::Request::new(HelloRequest {
-        name: "Tonic".into(),
-    });
-
-    let response = client.say_hello(request).await?;
-
-    println!("RESPONSE={:?}", response);
-
-    Ok(())
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn basics() {}
 }

@@ -1,19 +1,27 @@
-use my_lib::hello_world::greeter_server::Greeter;
-use my_lib::hello_world::{HelloReply, HelloRequest};
+use my_lib::adder::adder_server::Adder;
+use my_lib::adder::{AddNumbersRequest, AddNumbersResponse};
 use tonic::{Request, Response, Result};
-use tracing::{info, instrument};
+use tracing::instrument;
 
 #[derive(Debug, Default)]
 pub struct Service;
 
 #[tonic::async_trait]
-impl Greeter for Service {
+impl Adder for Service {
     #[instrument]
-    async fn say_hello(&self, request: Request<HelloRequest>) -> Result<Response<HelloReply>> {
-        info!("Got a request from {:?}", request.remote_addr());
-
-        Ok(Response::new(HelloReply {
-            message: format!("Hello {}!", request.into_inner().name),
+    async fn add_numbers(
+        &self,
+        request: Request<AddNumbersRequest>,
+    ) -> Result<Response<AddNumbersResponse>> {
+        let operands = request.into_inner();
+        Ok(Response::new(AddNumbersResponse {
+            sum: operands.a + operands.b,
         }))
     }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn basics() {}
 }
