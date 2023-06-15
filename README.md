@@ -1,23 +1,59 @@
 # Bazel/Rust/Crates
 
-## Official build using Bazel
+Hybrid Bazel/Cargo project
+
+Released under [MIT License](LICENSE)
+
+## Prerequisites
+
+* [Install Bazel][bazel-install]
+* [Install Buildifier][buildifier-install]
+* [Install protoc][protoc-install] (Cargo development only)
+
+## Cookbook
+
+### Official build
 
 ```bash
 bazel build //...
 ```
 
-## Rapid local development using Cargo
-
-You'll need a local copy of [protoc][protoc-install] for this:
+### Official test
 
 ```bash
-cargo build
+bazel test //...
 ```
 
-## Repin Crates
+### Repin Crates
 
 ```bash
 CARGO_BAZEL_REPIN=true bazel build //...
 ```
 
+### Local build
+
+```bash
+cargo build
+```
+
+### Local test
+
+```bash
+cargo test
+```
+
+### Run server
+
+```bash
+bazel run my-server
+```
+
+### Run client
+
+```bash
+bazel run my-client
+```
+
+[bazel-install]: https://bazel.build/install/
+[buildifier-install]: https://github.com/bazelbuild/buildtools
 [protoc-install]: https://grpc.io/docs/protoc-installation/
