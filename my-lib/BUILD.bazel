@@ -3,8 +3,14 @@ load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
 load("@rules_rust//cargo:cargo_build_script.bzl", "cargo_build_script")
 
 SRCS = [
-    "src/lib.rs",
+    "src/result.rs",
+    "src/error.rs",
+    "src/object_model/mod.rs",
+    "src/object_model/widget.rs",
     "src/proto.rs",
+    "src/data_access/widget_repo.rs",
+    "src/data_access/mod.rs",
+    "src/lib.rs",
 ]
 
 cargo_build_script(
