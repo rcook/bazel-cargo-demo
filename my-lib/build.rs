@@ -6,30 +6,27 @@ use std::fs::{metadata, read_dir};
 use std::path::{Path, PathBuf};
 
 const RUNNING_IN_BAZEL_ENV: &str = "RUNNING_IN_BAZEL";
-const WORKSPACE_NAME: &str = "my-app";
 const PROTO_DIR: &str = "proto";
+const PROTO_EXT: &str = "proto";
 
-fn is_running_in_bazel() -> Result<bool> {
-    Ok(match var(RUNNING_IN_BAZEL_ENV) {
-        Ok(s) => s == "1" || s.to_lowercase() == "true",
-        Err(VarError::NotPresent) => false,
-        Err(e) => bail!(e),
-    })
-}
+fn get_proto_dir() -> Result<PathBuf> {
+    fn is_running_in_bazel() -> Result<bool> {
+        Ok(match var(RUNNING_IN_BAZEL_ENV) {
+            Ok(s) => s == "1" || s.to_lowercase() == "true",
+            Err(VarError::NotPresent) => false,
+            Err(e) => bail!(e),
+        })
+    }
 
-fn get_proto_dir(is_running_in_bazel: bool) -> Result<PathBuf> {
-    Ok(if is_running_in_bazel {
-        PathBuf::from(format!(
-            "../../{}/{}/_virtual_imports/{}",
-            WORKSPACE_NAME, PROTO_DIR, PROTO_DIR
-        ))
-        .absolutize_from(current_dir()?)?
-        .to_path_buf()
+    let proto_dir_rel = if is_running_in_bazel()? {
+        format!("../{PROTO_DIR}/_virtual_imports/{PROTO_DIR}")
     } else {
-        PathBuf::from(format!("../{}", PROTO_DIR))
-            .absolutize_from(current_dir()?)?
-            .to_path_buf()
-    })
+        format!("../{PROTO_DIR}")
+    };
+
+    Ok(Path::new(&proto_dir_rel)
+        .absolutize_from(current_dir()?)?
+        .to_path_buf())
 }
 
 fn list_files(start_dir: &Path, ext: Option<&OsStr>) -> Result<Vec<PathBuf>> {
@@ -60,9 +57,8 @@ fn list_files(start_dir: &Path, ext: Option<&OsStr>) -> Result<Vec<PathBuf>> {
 }
 
 fn main() -> Result<()> {
-    let is_running_in_bazel = is_running_in_bazel()?;
-    let proto_dir = get_proto_dir(is_running_in_bazel)?;
-    let protos = list_files(&proto_dir, Some(OsStr::new("proto")))?;
+    let proto_dir = get_proto_dir()?;
+    let protos = list_files(&proto_dir, Some(OsStr::new(PROTO_EXT)))?;
     tonic_build::configure().compile(&protos, &[proto_dir])?;
     Ok(())
 }

@@ -1,4 +1,4 @@
-workspace(name = "my-app")
+workspace(name = "bazel-cargo-demo")
 
 load("//scripts:utils.bzl", "load_http_archive")
 
