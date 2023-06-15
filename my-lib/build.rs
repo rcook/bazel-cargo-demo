@@ -31,26 +31,21 @@ fn get_proto_dir() -> Result<PathBuf> {
 
 fn list_files(start_dir: &Path, ext: Option<&OsStr>) -> Result<Vec<PathBuf>> {
     fn helper(paths: &mut Vec<PathBuf>, start_dir: &Path, ext: &Option<&OsStr>) -> Result<()> {
+        assert!(start_dir.is_absolute());
+
         for result in read_dir(start_dir)? {
             let entry = result?;
             let p = entry.path().absolutize_from(start_dir)?.to_path_buf();
             let m = metadata(&p)?;
             if m.is_dir() {
                 helper(paths, &p, ext)?;
-            } else if m.is_file() {
-                if ext.is_some() {
-                    if p.extension() == *ext {
-                        paths.push(p);
-                    }
-                } else {
-                    paths.push(p);
-                }
+            } else if m.is_file() && (ext.is_none() || p.extension() == *ext) {
+                paths.push(p);
             }
         }
         Ok(())
     }
 
-    assert!(start_dir.is_absolute());
     let mut paths = Vec::new();
     helper(&mut paths, start_dir, &ext)?;
     Ok(paths)
