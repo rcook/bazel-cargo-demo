@@ -1,6 +1,7 @@
 # Bazel/Rust/Crates
 
-Hybrid Bazel/Cargo project
+Demonstration of a hybrid Bazel/Cargo project: use Cargo for rapid, local development
+and Bazel for official builds
 
 Released under [MIT License](LICENSE)
 
@@ -10,48 +11,62 @@ Released under [MIT License](LICENSE)
 * [Install Buildifier][buildifier-install]
 * [Install protoc][protoc-install] (Cargo development only)
 
-## Cookbook
+## Bazel examples
 
-### Official build
+Build:
 
 ```bash
 bazel build //...
 ```
 
-### Official test
+Test:
 
 ```bash
 bazel test //...
 ```
 
-### Repin Crates
+Repin:
 
 ```bash
 CARGO_BAZEL_REPIN=true bazel build //...
 ```
 
-### Local build
-
-```bash
-cargo build
-```
-
-### Local test
-
-```bash
-cargo test
-```
-
-### Run server
+Run server:
 
 ```bash
 bazel run my-server
 ```
 
-### Run client
+Run client:
 
 ```bash
 bazel run my-client
+```
+
+## Cargo examples
+
+Build:
+
+```bash
+cargo build
+```
+
+Test:
+
+```bash
+cargo test
+```
+
+Run server:
+
+```bash
+cargo run --bin my-server
+```
+
+Run client:
+
+```bash
+cargo run --vin my-client
 ```
 
 [bazel-install]: https://bazel.build/install/
