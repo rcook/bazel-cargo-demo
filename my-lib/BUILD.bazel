@@ -1,5 +1,5 @@
 load("@crate_index//:defs.bzl", "all_crate_deps")
-load("@rules_rust//rust:defs.bzl", "rust_library")
+load("@rules_rust//rust:defs.bzl", "rust_library", "rust_test")
 load("@rules_rust//cargo:cargo_build_script.bzl", "cargo_build_script")
 
 SRCS = [
@@ -28,4 +28,9 @@ rust_library(
     deps = [
         ":proto_build_script",
     ] + all_crate_deps(),
+)
+
+rust_test(
+    name = "my-lib-test",
+    crate = ":my-lib",
 )

@@ -1,5 +1,5 @@
 load("@crate_index//:defs.bzl", "all_crate_deps")
-load("@rules_rust//rust:defs.bzl", "rust_binary")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_test")
 
 SRCS = [
     "src/args.rs",
@@ -14,4 +14,9 @@ rust_binary(
     deps = [
         "//my-lib",
     ] + all_crate_deps(),
+)
+
+rust_test(
+    name = "my-server-test",
+    crate = ":my-server",
 )
